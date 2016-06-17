@@ -1,10 +1,18 @@
 #!/Python34/python
 
-from init import mvc
+import sys
+import cgitb
+import os
+sys.dont_write_bytecode = True
+cgitb.enable()
 
-print("Content-type: text/html")
-print("")
+from init import MvcApplication
 
-app = mvc()
+#try:
+app = MvcApplication(os.path.dirname(os.path.realpath(__file__)).replace("\\", "/"))
 app.load()
 app.run()
+app.end()
+#except Exception as e:
+    #app.error(e)
+    
