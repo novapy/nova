@@ -16,7 +16,7 @@ class Controller():
     def json(self, data):
         return JsonResult(self.response, data)
     
-    def view(self, data, viewFile = None):
+    def view(self, data = None, viewFile = None):
         if viewFile is not None:
             self.viewEngine.setViewFile(viewFile)
         

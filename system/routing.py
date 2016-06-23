@@ -4,15 +4,15 @@ class RouteCollection(Sequence):
     
     def __init__(self):
         self.collection = []
-        
-    def add(self, name, params):
-        self.collection.append(Route(name, params))
-        
+
     def __getitem__(self, index):
         return self.collection[index]
     
     def __len__(self):
         return len(self.collection)
+    
+    def add(self, name, params):
+        self.collection.append(Route(name, params))
     
     def toArray(self):
         return self.collection
@@ -67,14 +67,16 @@ class RouteHandler():
             tokens.append(token)
             
             for token in tokens:
-                uri = uri.replace(token, '#')
-        
+                if token !="":
+                    uri = uri.replace(token, '#')
+
             replaceTokens = list(filter(None,uri.split('#')))
             
             for idx, holder in enumerate(placeHolders):
                 route = route.replace('{'+ holder + '}', replaceTokens[idx])
                 params[holder] = replaceTokens[idx]
-
+                httpRequest.setParam(holder, replaceTokens[idx])
+        
         if httpRequest.getUri() == route:
             return params
         elif len(httpRequest.getUri()) == 0 and route == '/':

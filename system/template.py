@@ -1,16 +1,17 @@
 from os import path
-from system.log import Output
-import sys
+from html import escape
+from html import unescape
 
 class Lexer():
     
     def __init__(self, string):
-        keywords = ['include']
-        self.tokens = []
+        
         token = '';
         codeBlock = False
         count = len(string)
         i = 0
+        lineCount = 1;
+        self.tokens = []
         
         while i < count:
             cc = string[i]
@@ -18,9 +19,9 @@ class Lexer():
                 nc = string[i+1]
             except:
                 nc = ''
-                
-            if token.strip() in keywords:
-                self.tokens.append({ 'type' : 'FUNC', 'token' : token[1:].strip() })
+
+            if token.strip() == 'include':
+                self.tokens.append({ 'type' : 'FUNC', 'token' : token[1:].strip() , 'line' : lineCount})
                 token = ""
                 continue
   
@@ -32,7 +33,7 @@ class Lexer():
                 continue
                 
             if cc == "%" and nc == "}" and codeBlock == True:
-                self.tokens.append({ 'type' : 'CODE', 'token' : token[1:].strip() })
+                self.tokens.append({ 'type' : 'CODE', 'token' : token[1:].strip(), 'line' : lineCount})
                 token = ""
                 codeBlock = False
                 i+=2
@@ -40,8 +41,11 @@ class Lexer():
             
             token = token + cc
             i+=1
+            
+            if cc == "\n":
+                lineCount +=1
 
-        self.tokens.append({ 'type' : 'HTML', 'token' : token })
+        self.tokens.append({ 'type' : 'HTML', 'token' : token , 'line' : lineCount})
         
     def getTokens(self):
         return self.tokens
@@ -49,6 +53,7 @@ class Lexer():
 class Compiler():
     
     def compile(rootPath, tokens, data):
+
         output = ""
         for i, token in enumerate(tokens):
             if token['type'] == 'HTML':
@@ -67,22 +72,56 @@ class Compiler():
                             raise Exception("Include file not found")
                         
             elif token['type'] == 'CODE':
-                if token['token'].find('.') > -1:
-                    pass
+                if '.' in token['token']:
+                    segments = token['token'].split('.')
+                    objName = segments[0]
+                    objProp = segments[1]
+                    del segments[0]
+                    del segments[0]
+
+                    if objName in data:
+                        obj = data[objName]
+                        
+                        if hasattr(obj, objProp):
+                            value = escape(getattr(obj, objProp))
+                            
+                        if len(segments) > 0:
+                            functions = Functions(value)
+                            
+                            for segment in segments:
+                                funcName = segment[:segment.find('(')]
+                                functions = Functions(value)
+                                if hasattr(functions, funcName):
+                                    func = getattr(functions, funcName)
+                                    value = func()
+
+                        output += value
+                    
                 else:
                     varName = token['token']
                     if varName in data:
                         val = data[varName]
                         
                         if isinstance(val, str):
-                            output += val
+                            output += escape(val)
                             
                         if isinstance(val, list):
-                            output += str(val)
-                    #Output.flush(token)
-                    #sys.exit()
-                
-        #Output.flush(tokens)
-        #sys.exit()
+                            output += escape(str(val))
         return output
+
+class Functions():
+    
+    def __init__(self, value):
+        self.value = value
         
+    def upper(self):
+        return self.value.upper()
+    
+    def lower(self):
+        return self.value.lower()
+    
+    def strip(self):
+        return self.value.strip()
+        
+    def raw(self):
+        return unescape(self.value)
