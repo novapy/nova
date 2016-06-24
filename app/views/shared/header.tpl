@@ -6,22 +6,58 @@
         font-size: 14px;
     }
 
-    header ul{
+    header >ul{
         list-style-type: none;
         padding:0px;
         margin:0px;
     }
-    header ul li{
+    header > ul > li{
         display: inline-block;
     }
-    header ul li a {
+    header > ul > li > a {
         color:#333;
         text-decoration: none;
         display: inline-block;
         padding:15px 10px;
     }
-    header ul li a:hover{
-        background-color:#F8F8F8;
+    header > ul > li:hover{
+        background-color:#F5F5F5;
+    }
+    header > ul > li:hover .lib-menu {
+        display: block;
+    }
+    
+    .lib-menu {
+        position:absolute;
+        z-index:9999;
+        background-color: #FFF;
+        left:0px;
+        right:0px;
+        display: none;
+        border-top:3px solid #F5F5F5;
+    }
+    .lib-menu > div > div {
+        display: inline-block;;
+        vertical-align:top;
+        margin-right:40px;
+    }
+    .lib-menu > div > div > h3 {
+        color:#24C0E0;
+    }
+    .lib-menu > div > div > ul {
+        padding:0px;
+        margin:0px;
+        list-style-type:none;
+    }
+    .lib-menu > div > div > ul > li > a {
+        color:#666;
+        text-decoration:none;
+        display:block;
+        padding:5px 0px;
+    }
+    .lib-menu > div > div > ul > li > a:hover{
+        text-decoration:underline;
+        color:#24C0E0;
     }
     
     .bg {
@@ -106,6 +142,7 @@
     
     .center-text { text-align: center }
     .display-block { display:inline-block; }
+    .clear{clear:both;}
     
     .max-width-500 { max-width: 500px;}
     .max-width-600 { max-width: 600px;}
@@ -123,7 +160,12 @@
         <ul>
             <li><a href="/">n</a></li>
             <li><a href="/quick-guide">Quick Guide</a></li>
-            <li><a href="/library/system">Library</a></li>
+            <li>
+                <a href="/library/system">Library</a>
+                <div class="lib-menu">
+                    <div class="container">{% library %}</div>
+                </div>
+            </li>
         </ul>
     </header>
 </div>

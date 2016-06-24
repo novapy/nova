@@ -8,31 +8,36 @@ from inspect import isclass
 from system.log import Output
 class Index(Controller):
     
-    def load(self):
+    def getLibrary(self):
         modules = [
             'system.html',
             'system.http',
             'system.log',
+            'system.mvc',
+            'system.routing',
+            'system.template',
+            'system.view',
+            'system.web',
         ]
         
-        self.library = '<ul>'
+        library = ''
         for module in modules:
             mod = import_module(module)
-            self.library += '<li>' + module + '</li>'
-            self.library += '<ul>'
+            library += '<div><h3>' + module + '</h3>'
+            library += '<ul>'
             for name, obj in getmembers(mod):
                 if isclass(obj):
                     if obj.__module__ == module:
-                        self.library += '<li><a href="/library/system.http.' + name +'">' + name + '</a></li>'
+                        library += '<li><a href="/library/system.http.' + name +'">' + name + '</a></li>'
                         pass
-            self.library += '</ul>'
-        self.library += '</ul>'   
+            library += '</ul></div>'
+        return library
+            
                         
     def index(self):
+        
         return self.view({
-            'username' : 'Syed',
-            'password' : 'Hussim',
-            'list' : [1,2,3,4,5]
+            'library' : self.getLibrary()
         })
 
     def download(self, user):
@@ -45,6 +50,7 @@ class Index(Controller):
         })
         
     def library(self, lib):
+        
         segments = lib.split('.')
         module = segments[0]
         className = segments[1]
@@ -71,5 +77,5 @@ class Index(Controller):
 
         return self.view({
             'vTable' : vTable.render(),
-            'library' : self.library
+            'library' : self.getLibrary()
         })

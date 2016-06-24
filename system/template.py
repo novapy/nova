@@ -1,7 +1,7 @@
 from os import path
 from html import escape
 from html import unescape
-
+from system.log import Output
 class Lexer():
     
     def __init__(self, string):
@@ -102,7 +102,7 @@ class Compiler():
                                 func = getattr(functions, funcName)
                                 value = func()
                 else:
-                    value = data[token['token']]
+                    value = str(data[token['token']])
                 output += value
         return output
 
