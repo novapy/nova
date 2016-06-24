@@ -28,7 +28,7 @@ class Index(Controller):
             for name, obj in getmembers(mod):
                 if isclass(obj):
                     if obj.__module__ == module:
-                        library += '<li><a href="/library/system.http.' + name +'">' + name + '</a></li>'
+                        library += '<li><a href="/library/' + module + '.' + name +'">' + name + '</a></li>'
                         pass
             library += '</ul></div>'
         return library

@@ -21,17 +21,23 @@ class Table(Element):
         self._data = []
         
     def addHeader(self, header, text):
+        '''Adds a column header where header is a key and text is the 
+        column display heading.'''
+        
         self._headers[header] = text
         
-    def addRow(self, data):
-        self._data.append(data)
+    def addRow(self, rowData):
+        '''Adds a row to the Table control where rowData is a dict of key/values.'''
+        
+        self._data.append(rowData)
         
     def toArray(self):
         return self._data
     
     def render(self):
+        '''Gets the HTML code for this control.'''
+        
         control = ''
-
         for row in self._data:
             control += '<tr>'
             for header in self._headers:
