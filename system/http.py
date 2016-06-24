@@ -18,74 +18,92 @@ class HttpRequest():
         self._params = self._post
         
     def getUri(self):
-        '''Gets the request uri'''
+        '''Gets the request uri.'''
+        
         return self._uri
             
     def getSegment(self, index):
         '''Gets a uri segment using the specified index.'''
+        
         try:
             return self.segments[index]
         except IndexError:
             return False
         
     def isGet(self):
+        '''Gets a boolean value that determins if the request is a GET.'''
+        
         if os.environ["REQUEST_METHOD"] == 'GET':
             return True
         return False
         
     def isPost(self):
+        '''Gets a boolean value that determins if the request is a POST.'''
+        
         if os.environ["REQUEST_METHOD"] == 'POST':
             return True
         return False
     
     def getPost(self, name):
+        '''Gets the value of a post field using the specified name.'''
+        
         return self._post[name]
     
     def setParam(self, name, value):
+        '''Sets a param field using the specified name and value.'''
         self._params[name] = value
     
     def getParam(self, name):
+        '''Gets the value of a param field using the specified name.'''
+        
         return self._params[name]
     
     def setRouteData(self, data):
+        '''Sets route data for the current request.
+        This method is not intended to be used directly.''' 
+        
         self._routeData = data
     
     def getRouteData(self):
+        '''Gets a dict of all route data.'''
+        
         return self._routeData
     
     def toArray(self):
+        '''Gets a dict of all params.'''
+        
         return self._params
     
 class HttpResponse():
     
     def __init__(self):
-        self.contentType = 'text/html'
-        self.contentEncoding = 'UTF-8'
-        self.output = ''
-        self.cookies = CookieCollection()
+        self._contentType = 'text/html'
+        self._contentEncoding = 'UTF-8'
+        self._output = ''
+        self._cookies = CookieCollection()
     
     def setContentType(self, contentType):
-        self.contentType = contentType
+        self._contentType = contentType
         return self
     
     def setContentEncoding(self, contentEncoding):
-        self.contentEncoding = contentEncoding
+        self._contentEncoding = contentEncoding
         return self
     
     def write(self, output):
-        self.output = output
+        self._output = output
         return self
     
     def getCookies(self):
-        return self.cookies;
+        return self._cookies;
     
     def flush(self):
-        print("Content-type: " + self.contentType + ";charset=" + self.contentEncoding)
+        print("Content-type: " + self._contentType + ";charset=" + self._contentEncoding)
         
-        for cookie in self.cookies:
+        for cookie in self._cookies:
             print("Set-Cookie: {0}={1}; path={2}".format(parse.quote(cookie.getName()), parse.quote(cookie.getValue()), parse.quote(cookie.getPath())))
         print("")
-        print(self.output)
+        print(self._output)
         
 class CookieCollection(Sequence):
     

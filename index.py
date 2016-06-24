@@ -6,7 +6,7 @@ import os
 sys.dont_write_bytecode = True
 cgitb.enable()
 
-from init import MvcApplication
+from app import MvcApplication
 
 #try:
 app = MvcApplication(os.path.dirname(os.path.realpath(__file__)).replace("\\", "/"))

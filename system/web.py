@@ -4,7 +4,6 @@ from system.routing import RouteCollection
 from system.http import HttpRequest
 from system.http import HttpResponse
 from system.mvc import StringResult
-from system.log import Output
 class HttpApplication():
     
     def __init__(self, rootPath):
@@ -33,6 +32,9 @@ class HttpApplication():
                 controller.setHttpRequest(self.request)
                 controller.setHttpResponse(self.response)
                 action = getattr(controller, routeParams['action'])
+                
+                if hasattr(controller, 'load'):
+                    controller.load()
                 
                 actionArgs = getfullargspec(action).args
                 compiledArgs = {}
